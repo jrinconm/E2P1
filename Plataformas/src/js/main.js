@@ -17,9 +17,16 @@ let enemigo;
 let stars;
 let score = 0;
 let scoreText;
+let timer;
+let puntos = 100;
+let puntosText;
+let total = 0;
 
 function create() {
-
+    // Creo el timer
+    timer = game.time.create(false);
+    // Actualizo el tiempo cada 1 segundos
+    timer.loop(1000, descuentaPuntos, this);
     //  We're going to be using physics, so enable the Arcade Physics system
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
@@ -89,10 +96,11 @@ function create() {
 
     //  The score
     scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
-
+    puntosText = game.add.text(16, 40, 'Puntos: ' + puntos, { fontSize: '32px', fill: '#000' });
     //  Our controls.
     cursors = game.input.keyboard.createCursorKeys();
-    
+    // Arranco el timer
+    timer.start();
 }
 
 function update() {
@@ -136,14 +144,21 @@ function update() {
     }
 
 }
-
+function descuentaPuntos() {
+    if(puntos > 2){
+        puntos-=2;
+    } else {
+        puntos = 1;
+        timer.stop();
+    }
+    puntosText.text = 'Puntos: ' + puntos;
+}
 function collectStar (player, star) {
     
     // Removes the star from the screen
     star.kill();
 
     //  Add and update the score
-    score += 10;
+    score += puntos;
     scoreText.text = 'Score: ' + score;
-
 }
