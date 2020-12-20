@@ -3,18 +3,17 @@
 let game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
 function preload() {
-
     game.load.image('sky', 'assets/sky.png');
     game.load.image('ground', 'assets/platform.png');
     game.load.image('star', 'assets/star.png');
     game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
-
+    game.load.spritesheet('malo', 'assets/baddie.png', 32, 32);
 }
 
 let player;
 let platforms;
 let cursors;
-
+let enemigo;
 let stars;
 let score = 0;
 let scoreText;
@@ -51,19 +50,24 @@ function create() {
 
     // The player and its settings
     player = game.add.sprite(32, game.world.height - 150, 'dude');
-
+    enemigo = game.add.sprite(600, game.world.height - 150, 'malo');
     //  We need to enable physics on the player
     game.physics.arcade.enable(player);
-
+    game.physics.arcade.enable(enemigo);
     //  Player physics properties. Give the little guy a slight bounce.
     player.body.bounce.y = 0.2;
     player.body.gravity.y = 300;
     player.body.collideWorldBounds = true;
-
+    // Fisicas del enemigo
+    enemigo.body.bounce.y = 0.2;
+    enemigo.body.gravity.y = 300;
+    enemigo.body.collideWorldBounds = true;
     //  Our two animations, walking left and right.
     player.animations.add('left', [0, 1, 2, 3], 10, true);
     player.animations.add('right', [5, 6, 7, 8], 10, true);
-
+    // Animacion del malo
+    enemigo.animations.add('left', [0, 1], 10, true);
+    enemigo.animations.add('right', [2, 3], 10, true);
     //  Finally some stars to collect
     stars = game.add.group();
 
@@ -96,7 +100,7 @@ function update() {
     //  Collide the player and the stars with the platforms
     game.physics.arcade.collide(player, platforms);
     game.physics.arcade.collide(stars, platforms);
-
+    game.physics.arcade.collide(enemigo, platforms);
     //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
     game.physics.arcade.overlap(player, stars, collectStar, null, this);
 
