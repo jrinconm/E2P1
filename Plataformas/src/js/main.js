@@ -21,6 +21,7 @@ let timer;
 let puntos = 100;
 let puntosText;
 let total = 0;
+let finPartidaText;
 
 function create() {
     // Creo el timer
@@ -95,8 +96,10 @@ function create() {
     }
 
     //  The score
-    scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+    scoreText = game.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
     puntosText = game.add.text(16, 40, 'Puntos: ' + puntos, { fontSize: '32px', fill: '#000' });
+    finPartidaText = game.add.text(200, 300-32, '', { fontSize: '32px', fill: '#000' });
+    finPartidaText.visible = false;
     //  Our controls.
     cursors = game.input.keyboard.createCursorKeys();
     // Arranco el timer
@@ -111,7 +114,8 @@ function update() {
     game.physics.arcade.collide(enemigo, platforms);
     //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
     game.physics.arcade.overlap(player, stars, collectStar, null, this);
-
+    // Compruebo si me ha mordido el perro
+    game.physics.arcade.overlap(player, enemigo, muertePerro, null, this);
     //  Reset the players velocity (movement)
     player.body.velocity.x = 0;
 
@@ -133,7 +137,6 @@ function update() {
     {
         //  Stand still
         player.animations.stop();
-
         player.frame = 4;
     }
     
@@ -153,12 +156,21 @@ function descuentaPuntos() {
     }
     puntosText.text = 'Puntos: ' + puntos;
 }
-function collectStar (player, star) {
-    
+function collectStar (player, star) {    
     // Removes the star from the screen
     star.kill();
-
     //  Add and update the score
     score += puntos;
     scoreText.text = 'Score: ' + score;
+    if(stars.total === 0){
+        player.kill();
+        finPartidaText.text = "Se acabaron las estrellas por hoy!";
+        finPartidaText.visible = true;
+    }
+}
+function muertePerro (player, enemigo) {    
+    // Removes the star from the screen
+    player.kill();
+    finPartidaText.text = "Perdiste, te ha mordido el perro!";
+    finPartidaText.visible = true;
 }
