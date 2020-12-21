@@ -1,5 +1,16 @@
 "use strict";
+/* 
+Implementación de funcionalidades
+Pendiente:
+Añadir un enemigo que se mueva lateralmente por la pantalla. 
+Coger un ítem que aparezca en un lugar aleatorio de la pantalla y que cuando se obtenga, el protagonista puede hacer salto doble (saltar una vez extra cuando esta en el aire).
+Crear estrellas malvadas (de otro color) que cuando el protagonista las toque te resten 100 puntos.
 
+Realizado:
+Hacer que conforme pase el tiempo se reduzca el número de puntos que te da coger una estrella, hasta un mínimo de 1 punto. Por ejemplo, cada estrella podría valer 100 puntos y cada segundo restarse dos puntos.
+El protagonista si lo toca morirá.
+
+*/
 let game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
 function preload() {
@@ -22,7 +33,7 @@ let puntos = 100;
 let puntosText;
 let total = 0;
 let finPartidaText;
-
+let direccionEnemigo='left';
 function create() {
     // Creo el timer
     timer = game.time.create(false);
@@ -118,7 +129,19 @@ function update() {
     game.physics.arcade.overlap(player, enemigo, muertePerro, null, this);
     //  Reset the players velocity (movement)
     player.body.velocity.x = 0;
-
+    // Muevo el enemigo de lado a lado
+    if(enemigo.body.x===0 && direccionEnemigo==='left'){
+        enemigo.animations.play('right');
+        direccionEnemigo='right'
+    } else if(enemigo.body.x===768 && direccionEnemigo==='right'){     
+        enemigo.animations.play('left');
+        direccionEnemigo='left'
+    } 
+    if(direccionEnemigo==='left'){
+        enemigo.body.velocity.x = -150;
+    } else {
+        enemigo.body.velocity.x = 150;
+    }
     if (cursors.left.isDown)
     {
         //  Move to the left
@@ -130,7 +153,6 @@ function update() {
     {
         //  Move to the right
         player.body.velocity.x = 150;
-
         player.animations.play('right');
     }
     else
