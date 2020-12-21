@@ -38,6 +38,8 @@ let total = 0;
 let finPartidaText;
 let direccionEnemigo='left';
 let dobleSalto = false;
+let solteSalto = false;
+let toquesuelo;
 function create() {
     // Creo el timer
     timer = game.time.create(false);
@@ -141,8 +143,10 @@ function create() {
     cursors = game.input.keyboard.createCursorKeys();
     // Arranco el timer
     timer.start();
+    game.input.keyboard.onUpCallback = function (e){
+        sueltaTecla(e.keyCode);
+    };
 }
-
 function update() {
 
     //  Collide the player and the stars with the platforms
@@ -193,12 +197,18 @@ function update() {
     }
     
     //  Allow the player to jump if they are touching the ground.
-    if (cursors.up.isDown && player.body.touching.down)
-    {
+    if (cursors.up.isDown && player.body.touching.down){        
         player.body.velocity.y = -350;
+        toquesuelo=true;
+        solteSalto = false;
+    } else {
+        if (cursors.up.isDown && solteSalto && dobleSalto && toquesuelo){
+                player.body.velocity.y = -350;
+                solteSalto = false;     
+                toquesuelo=false;
+            }
     }
-
-}
+} 
 function descuentaPuntos() {
     if(puntos > 2){
         puntos-=2;
@@ -237,4 +247,10 @@ function muertePerro (player, enemigo) {
     player.kill();
     finPartidaText.text = "Perdiste, te ha mordido el perro!";
     finPartidaText.visible = true;
+}
+function sueltaTecla(tecla){
+//    Tecla 38
+    if (tecla==38){
+        solteSalto = true;
+    }
 }
