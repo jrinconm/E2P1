@@ -2,14 +2,14 @@
 /* 
 Implementación de funcionalidades
 Pendiente:
-Añadir un enemigo que se mueva lateralmente por la pantalla. 
 Coger un ítem que aparezca en un lugar aleatorio de la pantalla y que cuando se obtenga, el protagonista puede hacer salto doble (saltar una vez extra cuando esta en el aire).
-Crear estrellas malvadas (de otro color) que cuando el protagonista las toque te resten 100 puntos.
+
 
 Realizado:
 Hacer que conforme pase el tiempo se reduzca el número de puntos que te da coger una estrella, hasta un mínimo de 1 punto. Por ejemplo, cada estrella podría valer 100 puntos y cada segundo restarse dos puntos.
 El protagonista si lo toca morirá.
-
+Añadir un enemigo que se mueva lateralmente por la pantalla. 
+Crear estrellas malvadas (de otro color) que cuando el protagonista las toque te resten 100 puntos.
 */
 let game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
@@ -17,6 +17,7 @@ function preload() {
     game.load.image('sky', 'assets/sky.png');
     game.load.image('ground', 'assets/platform.png');
     game.load.image('star', 'assets/star.png');
+    game.load.image('starMalvada', 'assets/star.png');
     game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
     game.load.spritesheet('malo', 'assets/baddie.png', 32, 32);
 }
@@ -26,11 +27,11 @@ let platforms;
 let cursors;
 let enemigo;
 let stars;
+let starsMalvadas;
 let score = 0;
 let scoreText;
 let timer;
 let puntos = 100;
-let puntosText;
 let total = 0;
 let finPartidaText;
 let direccionEnemigo='left';
@@ -89,9 +90,12 @@ function create() {
     enemigo.animations.add('right', [2, 3], 10, true);
     //  Finally some stars to collect
     stars = game.add.group();
-
     //  We will enable physics for any star that is created in this group
     stars.enableBody = true;
+    //  Las que restan puntos
+    starsMalvadas = game.add.group();
+    //  We will enable physics for any star that is created in this group
+    starsMalvadas.enableBody = true;
 
     //  Here we'll create 12 of them evenly spaced apart
     for (let i = 0; i < 12; i++)
@@ -106,9 +110,20 @@ function create() {
         star.body.bounce.y = 0.7 + Math.random() * 0.2;
     }
 
+    //  Creare 3 en sitios random (a la misma altura, pero dentro dfe los 800px)
+    for (let i = 0; i < 3; i++)
+    {
+        //  Create a star inside of the 'stars' group
+        var starMalvada = starsMalvadas.create(Math.floor(Math.random() * 801), 0, 'star');
+
+        //  Let gravity do its thing
+        starMalvada.body.gravity.y = 300;
+        starMalvada.tint = 0x006400;
+        //  This just gives each star a slightly random bounce value
+        starMalvada.body.bounce.y = 0.7 + Math.random() * 0.2;
+    }
     //  The score
     scoreText = game.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
-    puntosText = game.add.text(16, 40, 'Puntos: ' + puntos, { fontSize: '32px', fill: '#000' });
     finPartidaText = game.add.text(200, 300-32, '', { fontSize: '32px', fill: '#000' });
     finPartidaText.visible = false;
     //  Our controls.
@@ -123,8 +138,10 @@ function update() {
     game.physics.arcade.collide(player, platforms);
     game.physics.arcade.collide(stars, platforms);
     game.physics.arcade.collide(enemigo, platforms);
+    game.physics.arcade.collide(starsMalvadas, platforms);
     //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
     game.physics.arcade.overlap(player, stars, collectStar, null, this);
+    game.physics.arcade.overlap(player, starsMalvadas, collectStarMalvada, null, this);
     // Compruebo si me ha mordido el perro
     game.physics.arcade.overlap(player, enemigo, muertePerro, null, this);
     //  Reset the players velocity (movement)
@@ -176,7 +193,6 @@ function descuentaPuntos() {
         puntos = 1;
         timer.stop();
     }
-    puntosText.text = 'Puntos: ' + puntos;
 }
 function collectStar (player, star) {    
     // Removes the star from the screen
@@ -189,6 +205,13 @@ function collectStar (player, star) {
         finPartidaText.text = "Se acabaron las estrellas por hoy!";
         finPartidaText.visible = true;
     }
+}
+function collectStarMalvada (player, starMalvada) {    
+    // Removes the star from the screen
+    starMalvada.kill();
+    //  Add and update the score
+    score -= 100;
+    scoreText.text = 'Score: ' + score;
 }
 function muertePerro (player, enemigo) {    
     // Removes the star from the screen
