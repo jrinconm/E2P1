@@ -18,6 +18,14 @@ let tileSize = 40;
 let player;
 // Control de tecla
 let teclaPulsada;
+// Temporizador
+let timer;
+// Puntuacion
+let score = 0;
+let scoreText;
+// Fin partida
+let finPartidaText;
+
 function preload() {
     game.load.spritesheet("tiles", "assets/tiles.png", 40, 40);
 }
@@ -91,13 +99,21 @@ function create() {
     // once the level has been created, we wait for the player to touch or click, then we call
     // beginSwipe function
     game.input.onDown.add(beginSwipe, this);
-    //  Our controls.
+    // Con teclas
     cursors = game.input.keyboard.createCursorKeys();
     game.input.keyboard.onDownCallback = function (e){pulsaTecla(e.keyCode);
     };
     game.input.keyboard.onUpCallback = function (e){
         teclaPulsada=false;
     };
+    // Creo el timer
+    timer = game.time.create(false);
+    // Actualizo el tiempo cada 1 segundos
+    timer.add(60000, gameOver, this);
+    timer.start();
+    //Pongo la puntuacion
+    finPartidaText = game.add.text(10, 60, '', { fontSize: '32px', fill: '#000' });
+    finPartidaText.visible = false;
 
 }
 // when the player begins to swipe we only save mouse/finger coordinates, remove the touch/click
@@ -141,6 +157,13 @@ function pulsaTecla() {
     teclaPulsada = true;
 }
 
+// Fin de juego
+function gameOver(){
+    console.log("Fin de tiempo")
+    player.kill();
+    finPartidaText.text = "Se acabó el tiempo!";
+    finPartidaText.visible = true;
+}
 // function to be called when the player releases the mouse/finger
 function endSwipe() {
     // saving mouse/finger coordinates
