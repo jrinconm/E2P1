@@ -25,6 +25,8 @@ let score = 0;
 let scoreText;
 // Fin partida
 let finPartidaText;
+// Texto del timer
+let timerText;
 
 function preload() {
     game.load.spritesheet("tiles", "assets/tiles.png", 40, 40);
@@ -110,10 +112,14 @@ function create() {
     timer = game.time.create(false);
     // Actualizo el tiempo cada 1 segundos
     timer.add(60000, gameOver, this);
+    // Actualizo el tiempo cada 1 segundos
+    timer.loop(1000, cuentaSegundos, this);
     timer.start();
-    //Pongo la puntuacion
+    // Pongo la puntuacion
     finPartidaText = game.add.text(10, 60, '', { fontSize: '32px', fill: '#000' });
     finPartidaText.visible = false;
+    // Pongo el temporizador
+    timerText = game.add.text(10, 0, 'Segundos: 0', { fontSize: '32px', fill: '#000' });
 
 }
 // when the player begins to swipe we only save mouse/finger coordinates, remove the touch/click
@@ -159,10 +165,13 @@ function pulsaTecla() {
 
 // Fin de juego
 function gameOver(){
-    console.log("Fin de tiempo")
     player.kill();
     finPartidaText.text = "Se acabó el tiempo!";
     finPartidaText.visible = true;
+    timer.stop();
+}
+function cuentaSegundos(){
+    timerText.text = "Segundos: " + Math.floor((timer.ms)/1000);
 }
 // function to be called when the player releases the mouse/finger
 function endSwipe() {
