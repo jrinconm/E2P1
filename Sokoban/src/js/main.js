@@ -16,6 +16,8 @@ let tileSize = 40;
 
 // the player! Yeah!
 let player;
+// Control de tecla
+let teclaPulsada;
 function preload() {
     game.load.spritesheet("tiles", "assets/tiles.png", 40, 40);
 }
@@ -89,6 +91,14 @@ function create() {
     // once the level has been created, we wait for the player to touch or click, then we call
     // beginSwipe function
     game.input.onDown.add(beginSwipe, this);
+    //  Our controls.
+    cursors = game.input.keyboard.createCursorKeys();
+    game.input.keyboard.onDownCallback = function (e){pulsaTecla(e.keyCode);
+    };
+    game.input.keyboard.onUpCallback = function (e){
+        teclaPulsada=false;
+    };
+
 }
 // when the player begins to swipe we only save mouse/finger coordinates, remove the touch/click
 // input listener and add a new listener to be fired when the mouse/finger has been released,
@@ -98,6 +108,37 @@ function beginSwipe() {
     startY = game.input.worldY;
     game.input.onDown.remove(beginSwipe);
     game.input.onUp.add(endSwipe);
+}
+
+function pulsaTecla() {
+    if(!teclaPulsada){
+    startX = game.input.worldX;
+    startY = game.input.worldY;
+    if (cursors.left.isDown)
+    {
+        //  Move to the left
+        move(-1, 0);
+    }
+    else if (cursors.right.isDown)
+    {
+        //  Move to the right
+        move(1, 0);
+    }
+    else if (cursors.up.isDown)
+    {
+        //  Move to the arriba
+        move(0, -1);
+    }
+    else if (cursors.down.isDown)
+    {
+        //  Move to the abajo
+        move(0, 1);
+    }
+    }
+    /* 
+    game.input.onDown.remove(beginSwipe);
+    game.input.onUp.add(endSwipe); */
+    teclaPulsada = true;
 }
 
 // function to be called when the player releases the mouse/finger
