@@ -30,6 +30,7 @@ let timerText;
 
 function preload() {
     game.load.spritesheet("tiles", "assets/tiles.png", 40, 40);
+    game.load.spritesheet("muerte", "assets/muerte.png", 40, 40);
 }
 // function to scale up the game to full screen
 function goFullScreen() {
@@ -91,9 +92,16 @@ function create() {
                     fixedGroup.add(tile);
                     break;
                 default:
-                    // creation of a simple tile
-                    tile = game.add.sprite(40 * i, 40 * j, "tiles");
-                    tile.frame = level[j][i];
+                    // Cambio de color una zona para que se mueran ahi
+                    if(j===7 && i===2){
+                        tile = game.add.sprite(40 * i, 40 * j, "muerte");
+                        tile.frame = 0;
+                        tile.tint = 0xFF0000;
+                    } else {
+                    // creation of a simple tile                    
+                        tile = game.add.sprite(40 * i, 40 * j, "tiles");
+                        tile.frame = level[j][i];
+                    }
                     fixedGroup.add(tile);
             }
         }
@@ -120,7 +128,6 @@ function create() {
     finPartidaText.visible = false;
     // Pongo el temporizador
     timerText = game.add.text(10, 0, 'Segundos: 0', { fontSize: '32px', fill: '#000' });
-
 }
 // when the player begins to swipe we only save mouse/finger coordinates, remove the touch/click
 // input listener and add a new listener to be fired when the mouse/finger has been released,
@@ -266,6 +273,10 @@ function movePlayer(deltaX, deltaY) {
     level[player.posY][player.posX] += PLAYER;
     // changing player frame accordingly  
     player.frame = level[player.posY][player.posX];
+    // Me he quemado 
+    if (player.posX === 2 && player.posY === 7){
+        gameOver();
+    }
 }
 
 // function to move the crate
