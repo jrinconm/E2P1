@@ -20,14 +20,15 @@ let player;
 let teclaPulsada;
 // Temporizador
 let timer;
-// Puntuacion
-let score = 0;
-let scoreText;
 // Fin partida
 let finPartidaText;
 // Texto del timer
 let timerText;
-
+// Puntuacion
+let puntos=0;
+// Maxima puntuacion
+let maxPuntos;
+let maxPuntosText;
 function preload() {
     game.load.spritesheet("tiles", "assets/tiles.png", 40, 40);
     game.load.spritesheet("muerte", "assets/muerte.png", 40, 40);
@@ -126,6 +127,8 @@ function create() {
     // Pongo la puntuacion
     finPartidaText = game.add.text(10, 60, '', { fontSize: '32px', fill: '#000' });
     finPartidaText.visible = false;
+    maxPuntosText = game.add.text(10, 120, '', { fontSize: '32px', fill: '#000' });
+    maxPuntosText.visible = false;
     // Pongo el temporizador
     timerText = game.add.text(10, 0, 'Segundos: 0', { fontSize: '32px', fill: '#000' });
 }
@@ -181,10 +184,25 @@ function gameOver(texto = "Game over"){
 // Fin de juego
 function victoria(){
     player.kill();
-    finPartidaText.text = "Has ganado!" ;
+    // Uso el timer text y asi lo reutilizo
+    timerText.text = "Has ganado con "
+    finPartidaText.text = puntos + " puntos";
     finPartidaText.visible = true;
     timer.stop();
+    grabapartida();
 }
+//Graba las estadisticas en localstorage si es preciso
+function grabapartida(){
+    let recordPuntos=localStorage.getItem("recordPuntos");
+    // Si no existe la variable en el localstorage
+    if ( recordPuntos === null || puntos < recordPuntos) {
+        localStorage.setItem("recordPuntos",puntos);
+        recordPuntos=puntos;
+    }
+    maxPuntosText.text = "Record: " + recordPuntos;
+    maxPuntosText.visible = true;
+}
+
 function cuentaSegundos(){
     timerText.text = "Segundos: " + Math.floor((timer.ms)/1000);
 }
@@ -277,6 +295,7 @@ function movePlayer(deltaX, deltaY) {
     if (player.posX >= 1 && player.posX <= 3 && player.posY === 7){
         gameOver();
     }
+    puntos++;
 }
 
 // function to move the crate
