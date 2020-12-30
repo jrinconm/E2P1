@@ -164,7 +164,7 @@ function pulsaTecla() {
 }
 
 // Fin de juego
-function gameOver(texto = "Se acabó el tiempo!"){
+function gameOver(texto = "Game over"){
     player.kill();
     finPartidaText.text = texto;
     finPartidaText.visible = true;
