@@ -92,8 +92,8 @@ function create() {
                     fixedGroup.add(tile);
                     break;
                 default:
-                    // Cambio de color una zona para que se mueran ahi
-                    if(j===7 && i===2){
+                    // Creo zona de muerte
+                    if(j===7 && (i>=1 && i<=3)){
                         tile = game.add.sprite(40 * i, 40 * j, "muerte");
                         tile.frame = 0;
                         tile.tint = 0xFF0000;
@@ -274,7 +274,7 @@ function movePlayer(deltaX, deltaY) {
     // changing player frame accordingly  
     player.frame = level[player.posY][player.posX];
     // Me he quemado 
-    if (player.posX === 2 && player.posY === 7){
+    if (player.posX >= 1 && player.posX <= 3 && player.posY === 7){
         gameOver();
     }
 }
