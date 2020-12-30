@@ -110,7 +110,7 @@ function create() {
     };
     // Creo el timer
     timer = game.time.create(false);
-    // Actualizo el tiempo cada 1 segundos
+    // A los 60 segundos se acaba la partida
     timer.add(60000, gameOver, this);
     // Actualizo el tiempo cada 1 segundos
     timer.loop(1000, cuentaSegundos, this);
@@ -164,9 +164,17 @@ function pulsaTecla() {
 }
 
 // Fin de juego
-function gameOver(){
+function gameOver(texto = "Se acabó el tiempo!"){
     player.kill();
-    finPartidaText.text = "Se acabó el tiempo!";
+    finPartidaText.text = texto;
+    finPartidaText.visible = true;
+    timer.stop();
+}
+// Victoria
+// Fin de juego
+function victoria(){
+    player.kill();
+    finPartidaText.text = "Has ganado!" ;
     finPartidaText.visible = true;
     timer.stop();
 }
@@ -277,4 +285,8 @@ function moveCrate(deltaX, deltaY) {
     level[player.posY + 2 * deltaY][player.posX + 2 * deltaX] += CRATE;
     // changing crate frame accordingly  
     crates[player.posY + 2 * deltaY][player.posX + 2 * deltaX].frame = level[player.posY + 2 * deltaY][player.posX + 2 * deltaX];
+    // Compruebo si la caja está en la X, que es el sprite 5
+    if (crates[player.posY + 2 * deltaY][player.posX + 2 * deltaX].frame===5){
+        victoria();
+    }
 }
