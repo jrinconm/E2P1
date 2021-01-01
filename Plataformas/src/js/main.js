@@ -14,7 +14,7 @@ Coger un ítem que aparezca en un lugar aleatorio de la pantalla y
 let game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
 function preload() {
-    game.load.image('sky', 'assets/sky.png');
+    game.load.image('sky', 'assets/andes.jpg');
     game.load.image('ground', 'assets/platform.png');
     game.load.image('star', 'assets/star.png');
     game.load.image('starMalvada', 'assets/star.png');
