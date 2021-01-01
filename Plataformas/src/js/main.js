@@ -1,16 +1,5 @@
 "use strict";
-/* 
-Implementación de funcionalidades
-Pendiente:
-que cuando se obtenga, el protagonista puede hacer salto doble (saltar una vez extra cuando esta en el aire).
 
-Realizado:
-Hacer que conforme pase el tiempo se reduzca el número de puntos que te da coger una estrella, hasta un mínimo de 1 punto. Por ejemplo, cada estrella podría valer 100 puntos y cada segundo restarse dos puntos.
-El protagonista si lo toca morirá.
-Añadir un enemigo que se mueva lateralmente por la pantalla. 
-Crear estrellas malvadas (de otro color) que cuando el protagonista las toque te resten 100 puntos.
-Coger un ítem que aparezca en un lugar aleatorio de la pantalla y 
-*/
 let game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
 function preload() {
@@ -127,13 +116,12 @@ function create() {
         //  This just gives each star a slightly random bounce value
         starMalvada.body.bounce.y = 0.7 + Math.random() * 0.2;
     }
-
+    // El item para doble salto
     diamante = game.add.sprite(Math.floor(Math.random() * 801), 0, 'diamante');
     game.physics.arcade.enable(diamante);
     // Fisicas del enemigo
     diamante.body.bounce.y = 0.2;
     diamante.body.gravity.y = 300;
-
 
     //  The score
     scoreText = game.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#FFF' });
@@ -163,7 +151,7 @@ function update() {
     game.physics.arcade.overlap(player, enemigo, muertePerro, null, this);
     //  Reset the players velocity (movement)
     player.body.velocity.x = 0;
-    // Muevo el enemigo de lado a lado
+    // Que cambie de lado al final
     if(enemigo.body.x===0 && direccionEnemigo==='left'){
         enemigo.animations.play('right');
         direccionEnemigo='right'
@@ -171,6 +159,7 @@ function update() {
         enemigo.animations.play('left');
         direccionEnemigo='left'
     } 
+    // Que corra de lado a lado 
     if(direccionEnemigo==='left'){
         enemigo.body.velocity.x = -150;
     } else {
@@ -202,6 +191,7 @@ function update() {
         toquesuelo=true;
         solteSalto = false;
     } else {
+        // Dobler salto
         if (cursors.up.isDown && solteSalto && dobleSalto && toquesuelo){
                 player.body.velocity.y = -350;
                 solteSalto = false;     
@@ -209,6 +199,7 @@ function update() {
             }
     }
 } 
+// Descuenta puntos de 2 en 2
 function descuentaPuntos() {
     if(puntos > 2){
         puntos-=2;
@@ -229,6 +220,7 @@ function collectStar (player, star) {
         finPartidaText.visible = true;
     }
 }
+// La misma funcion de arriba, pero resta puntos
 function collectStarMalvada (player, starMalvada) {    
     // Removes the star from the screen
     starMalvada.kill();
@@ -236,18 +228,21 @@ function collectStarMalvada (player, starMalvada) {
     score -= 100;
     scoreText.text = 'Score: ' + score;
 }
+// Recoge el diamante para el doble salto
 function collectDiamante (player, diamante) {    
     // Removes the star from the screen
     diamante.kill();
-    //  Add and update the score
+    //  Activo doble salto
     dobleSalto = true;
 }
+// Si toco el perro muerte
 function muertePerro (player, enemigo) {    
-    // Removes the star from the screen
+    // Removes the player from the screen
     player.kill();
     finPartidaText.text = "Perdiste, te ha mordido el perro!";
     finPartidaText.visible = true;
 }
+// Comprobacion para no volar por la pantalla
 function sueltaTecla(tecla){
 //    Tecla 38
     if (tecla==38){
