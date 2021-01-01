@@ -31,6 +31,7 @@ let maxPuntos;
 let maxPuntosText;
 function preload() {
     game.load.spritesheet("tiles", "assets/tiles.png", 40, 40);
+    // Sprite de la zona de muerte
     game.load.spritesheet("muerte", "assets/muerte.png", 40, 40);
 }
 // function to scale up the game to full screen
@@ -141,8 +142,9 @@ function beginSwipe() {
     game.input.onDown.remove(beginSwipe);
     game.input.onUp.add(endSwipe);
 }
-
+// funcion al pulsar la tecla
 function pulsaTecla() {
+    // Solo se activa la primera pulsación, hasta que no se suelta, nada
     if(!teclaPulsada){
     startX = game.input.worldX;
     startY = game.input.worldY;
@@ -202,7 +204,7 @@ function grabapartida(){
     maxPuntosText.text = "Record: " + recordPuntos;
     maxPuntosText.visible = true;
 }
-
+// Actualiza el contador
 function cuentaSegundos(){
     timerText.text = "Segundos: " + Math.floor((timer.ms)/1000);
 }
@@ -316,6 +318,7 @@ function moveCrate(deltaX, deltaY) {
     // changing crate frame accordingly  
     crates[player.posY + 2 * deltaY][player.posX + 2 * deltaX].frame = level[player.posY + 2 * deltaY][player.posX + 2 * deltaX];
     // Compruebo si la caja está en la X, que es el sprite 5
+    // Meto los puros de Cuba en la caja :D 
     if (crates[player.posY + 2 * deltaY][player.posX + 2 * deltaX].frame===5){
         victoria();
     }
